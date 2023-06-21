@@ -1,0 +1,142 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+	<div class="container container2">
+			{# Si l'utilisateur est connecté et qu'il est admin #}
+			<h1 class="text-white">User</h1>
+			{{ form_start(form) }}
+			<form action="{{ path('app_user_index') }}" method="GET">
+				<div class="form-group">
+					<label for="email" class="text-white">Email</label>
+					<input type="text" class="form-control" id="email" name="email" placeholder="Write user's email here ..">
+				</div>
+				<li class="text-white">Filter by : 
+				</li>
+				<input type="submit" value="Rechercher">
+			</form>
+			{{ form_end(form) }}
+
+			<div class="d-flex justify-content-center">
+				{% if users.totalItemCount > 0 %}
+					<div class="mt-5-res">
+						{% do users.setPageRange(2) %}
+						{{ knp_pagination_render(users,'./pagination.html.twig') }}  
+					</div>
+				{% endif %}
+			</div>
+
+			{% if users|length > 0 %}
+
+				<table class="table text-white">
+					<thead>
+						<tr>
+							<th>Id</th>
+							<th>Name</th>
+							<th>Email</th>
+							<th>Password</th>
+							<th>RegisterDate</th>
+							<th>Admin</th>
+							<th>Banni</th>
+							<th>actions</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for userd in users %}
+							<tr>
+								<td>{{ userd.id }}</td>
+								<td>{{ userd.name }}</td>
+								<td>{{ userd.email }}</td>
+								<td>{{ userd.password }}</td>
+								<td>{{ userd.registerDate ? userd.registerDate|date('Y-m-d H:i:s') : '' }}</td>
+
+								<td>
+									{% if app.user.email == "admin@gmail.com" %}
+										{% if userd.admin == 1 %}
+											{% if userd.email == "admin@gmail.com" %}
+
+												<img
+												src="{{asset('image/checkInchangeable.png')}} " width="40rem">
+											{# check #}
+											</img>
+										{% else %}
+											<a href="{{ path('app_user_demote', {'id': userd.id}) }}"><img src="{{asset('image/check.png')}} " width="40rem">{# check #}</img>
+										</a>
+									{% endif %}
+								{% else %}
+									<a href="{{ path('app_user_promote', {'id': userd.id}) }}"><img src="{{asset('image/unchecked.png')}} " width="40rem">{# Uncheck #}</img>
+								</a>
+							{% endif %}
+						{% else %}
+							{% if userd.admin == 1 %}
+								<img
+								src="{{asset('image/checkInchangeable.png')}} " width="40rem">
+							{# check #}
+							</img>
+
+						{% else %}
+							<a href="{{ path('app_user_promote', {'id': userd.id}) }}"><img src="{{asset('image/unchecked.png')}} " width="40rem">{# Uncheck #}</img>
+						</a>
+					{% endif %}
+				{% endif %}
+			</td>
+
+			<td>
+			{% if userd.email =="admin@gmail.com" or app.user.id == userd.id %}
+				<img src="{{asset('image/uncheckedInchangeable.png')}} " width="40rem"></img>
+			{% else %}
+				{% if app.user.email =="admin@gmail.com" %}
+					{% if userd.ban == 0 %}
+						<a href="{{ path('app_user_ban', {'id': userd.id}) }}"><img src="{{asset('image/unchecked.png')}} " width="40rem">{# Uncheck #}</img>
+					{% else %}
+						<a href="{{ path('app_user_unban', {'id': userd.id}) }}"><img src="{{asset('image/check.png')}} " width="40rem">{# check #}</img>
+					{% endif %}
+				{% else %}
+					{% if userd.admin == 1 %}
+						{% if userd.ban == 0 %}
+							<img src="{{asset('image/uncheckedInchangeable.png')}} " width="40rem"></img>
+						{% else %}
+							<img src="{{asset('image/checkInchangeable.png')}} " width="40rem"></img>
+						{% endif %}
+					{% else %}
+						{% if userd.ban == 0 %}
+							<a href="{{ path('app_user_ban', {'id': userd.id}) }}"><img src="{{asset('image/unchecked.png')}} " width="40rem">{# Uncheck #}</img>
+						{% else %}
+						<img src="{{asset('image/check.png')}} " width="40rem">{# check #}</img>
+						{% endif %}
+					{% endif %}
+				{% endif %}
+			{% endif %}
+					</td>
+
+
+					<td>
+						<a href="{{ path('app_user_show', {'id': userd.id}) }}">
+							<img
+								src="{{asset('image/FullEye.png')}} " width="40rem"></img>
+						</a>
+						{% if app.user.id != userd.id and userd.email != "admin@gmail.com" %}
+							<a href="{{ path('app_default')}}?_switch_user={{userd.email}}">
+								<img
+								src="{{asset('image/personne.png')}} " width="40rem"></img>
+							</a>
+								<a href="{{ path('app_modify', {'id': userd.id}) }}"> <img src="{{asset('image/edit.png')}} " width="40rem"></img>
+								</a
+
+						{% endif %}
+					</td>
+				</tr>
+			</td>
+		</tbody>
+	{% endfor %}
+</table>{% else %}
+<p class="text-danger">No user found with this email</p>{% endif %}
+<div class="d-flex justify-content-center">
+	{% if users.totalItemCount > 0 %}
+		<div class="mt-5-res">
+			{% do users.setPageRange(2) %}
+			{{ knp_pagination_render(users,'./pagination.html.twig') }}  
+		</div>
+	{% endif %}
+</div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,90 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}User{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <h1 class="text-white">{{ users.name }}</h1>
+                <h2 class="text-white">{{ users.email }}</h2>
+            </div>
+        </div>
+        <input type="checkbox" id="ratecheckbox" onclick="rate()">
+        <label class="label-checkbox-userInfo" for="rate"> Series Rate</label>
+        <input type="checkbox" id="likecheckbox" onclick="like()">
+        <label class="label-checkbox-userInfo" for="like"> Series Like</label>
+        <div id="rate" style="display:none;">
+            <div class="container">
+                <div class="d-flex flex-wrap  col-res">
+                    {% for rate in users.rates %}
+                        <div class="col-md-4 mt-5 justify-content-center row2">
+                            <div id="card-userInfo" class="card w-50">
+                                <a  id="userInfo-a-commentaire" href="{{ path('app_series_show', {'id': rate.series.id}) }}">
+                                    <div class="card-body bg-dark d-flex align-items-center">
+                                        <h5 class="card-text text-white"> Serie : {{ rate.series.title}}</h5>
+                                    </div>
+                                    <div class="card-body bg-dark d-flex align-items-center">
+                                        <h5 class="card-text text-white">Rate : {{ rate.getvale}}</h5>
+                                    </div>
+                                    <div class="card-body bg-dark d-flex align-items-center">
+                                        <h5 class="card-text text-white">Comment : {{ rate.comment}}</h5>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div id="like" style="display:none;">
+            <div class="container">
+                <div class="d-flex flex-wrap col-res">
+                    {% for follow in users.series %}
+                        <div class="col-md-4 mt-5 justify-content-center row2">
+                            <div class="card">
+                                <a id="userInfo-a-commentaire" href="{{ path('app_series_show', {'id': follow.id}) }}">
+                                    <div  class="card-body bg-dark d-flex align-items-center">
+                                        <h5 class="card-text text-white">{{follow.title}}</h5>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <script>
+            function rate() {
+                if(document.getElementById("ratecheckbox").checked){
+                document.getElementById("rate").style.display = "block";
+                document.getElementById("likecheckbox").checked = false;
+                document.getElementById("like").style.display = "none";
+                }
+                if(document.getElementById("ratecheckbox").checked == false){
+                document.getElementById("rate").style.display = "none";
+                document.getElementById("likecheckbox").checked = true;
+                document.getElementById("like").style.display = "block";
+                }
+            }
+            function like() {
+                if(document.getElementById("likecheckbox").checked){
+                document.getElementById("like").style.display = "block";
+                document.getElementById("ratecheckbox").checked = false;
+                document.getElementById("rate").style.display = "none";
+                }
+                if(document.getElementById("likecheckbox").checked == false){
+                document.getElementById("rate").style.display = "block";
+                document.getElementById("ratecheckbox").checked = true;
+                document.getElementById("like").style.display = "none";
+                }
+            }
+            window.onload = function() {
+                document.getElementById("likecheckbox").checked = false;
+                document.getElementById("ratecheckbox").checked = true;
+                document.getElementById("rate").style.display = "block";
+                document.getElementById("like").style.display = "none"; 
+            }
+        </script>
+    </div>
+{% endblock %}

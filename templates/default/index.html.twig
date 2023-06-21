@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Home{% endblock %}
+
+{% block body %}
+
+
+    <div class="example-wrapper">
+        <div class="container">
+            <div class="d-flex flex-column align-items-center ">
+                <h1 class=" display-1 text-primary mt-5" ><span class="text-white">Netfl</span>ouz </h1>
+                <div class=" w-50 text-white mb-5 mt-5">
+                    <h5 class="  text-center">NetFlouz is a TV series search and rating platform. You can search through thousands of TV series with a multitude of possible filters. You can also give your opinion on the series that you liked or not</h5>
+                </div>
+                <a href="{{path('app_series_index')}}" class=" border border-white p-3 mb-5 btn btn-primary">Découvrir plus de série !</a>
+            </div>
+            <h5 class=" text-white text-left">Here are 9 random series of Netflouz!</h5>
+            <div class="d-flex flex-wrap col-res"> 
+            {% for serie in series %}
+                <div class="col-md-4 mt-5  row2 justify-content-center">
+                    <div class="card card-series">
+                        <a href="{{ path('app_series_show', {'id': serie.id,'rate':'default'}) }}">
+                        {{ serie.showPoster }}</a>
+                        <div class="card-body bg-dark d-flex-row d-flex justify-content-around ">
+                            <h5 class="card-text text-white">{{ serie.title }}</h5>
+                            <div class="d-flex flex-row justify ">
+                            {% if  serie.getNumberRates > 0 %}
+                                {% for i in range(1, 5 ) %}
+                                    {% if  i <= serie.getAverage|round  %}
+                                        <img id="star-img" src="{{asset('image/star.png')}}" ></img>
+                                    {% else %}
+                                        <img id="star-img" src="{{asset('image/star-vide.png')}}" ></img>
+                                    {% endif %}
+                                {% endfor %} 
+                                <p id="p-nb-rate">({{serie.getNumberRates}}) </p>
+                            {% else %}
+                            <p id="p-nb-rate">(0 vote)</p>
+                            {% endif %}
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

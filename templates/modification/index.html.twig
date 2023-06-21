@@ -1,0 +1,95 @@
+{% extends 'base.html.twig' %}
+
+{% block head %}    
+
+<!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <style>
+       
+        .body{
+            background-color: #000;
+        }
+    </style>
+
+{% block title %}Modify{% endblock %}
+{% endblock head %}
+
+
+{% block body %}
+{% if app.user.id == id or app.user.admin == 1 %}
+    <section class="vh-150 gradient-custom">
+        <div class="container py-5 h-100">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+                    <div class="card bg-dark text-white" style="border-radius: 1rem;">
+                        <div class="card-body p-5 text-center">
+
+                            <div class="mb-md-2 mt-md-1 pb-5">
+
+                                <h2 class="fw-bold mb-2 text-uppercase">Modify</h2>
+{{ form_start(modificationForm) }}
+{% if app.user.id == id %}
+
+     <div class="form-outline form-white mb-4">
+{{ form_label(modificationForm.email,'Actual email : ' ~ app.user.email, { 'attr': {'class': 'form-label'} }) }}
+{{ form_widget(modificationForm.email, { 'attr': {'class': 'form-control form-control-lg', 'placeholder': app.user.email, 'readonly': true } }) }}
+</div>
+
+<div class="form-outline form-white mb-4">
+{{ form_label(modificationForm.name,'Actual name : ' ~ app.user.name, { 'attr': {'class': 'form-label'} }) }}
+{{ form_widget(modificationForm.name, { 'attr': {'class': 'form-control form-control-lg', 'placeholder': 'Enter your new name'} }) }}
+</div>
+
+
+<div class="form-outline form-white mb-4">
+    {{ form_label(modificationForm.plainPassword, 'Actual password : ******** ', { 'attr': {'class': 'form-label'} }) }}
+{{ form_widget(modificationForm.plainPassword, { 'attr': {'class': 'form-control form-control-lg', 'placeholder': 'Enter your new Password'} }) }}
+</div>
+<div class="form-outline form-white mb-4">
+    {{ form_label(modificationForm.country, 'Actual Country : '  ~ app.user.country, { 'attr': {'class': 'form-label'} }) }}
+{{ form_widget(modificationForm.country, { 'attr': {'class': 'form-control form-control-lg'} }) }}
+</div>
+
+
+{% else %}
+     <div class="form-outline form-white mb-4">
+{{ form_label(modificationForm.email,'Email', { 'attr': {'class': 'form-label'} }) }}
+{{ form_widget(modificationForm.email, { 'attr': {'class': 'form-control form-control-lg', 'readonly': true } }) }}
+</div>
+
+<div class="form-outline form-white mb-4">
+{{ form_label(modificationForm.name,'Name', { 'attr': {'class': 'form-label'} }) }}
+{{ form_widget(modificationForm.name, { 'attr': {'class': 'form-control form-control-lg',  'readonly': true } }) }}
+</div>
+
+
+<div class="form-outline form-white mb-4">
+    {{ form_label(modificationForm.plainPassword, 'Actual password : ******** ', { 'attr': {'class': 'form-label'} }) }}
+{{ form_widget(modificationForm.plainPassword, { 'attr': {'class': 'form-control form-control-lg', 'placeholder': 'Enter your new Password'} }) }}
+</div>
+
+<div class="form-outline form-white mb-4">
+    {{ form_label(modificationForm.country, 'Country', { 'attr': {'class': 'form-label'} }) }}
+{{ form_widget(modificationForm.country, { 'attr': {'class': 'form-control form-control-lg', 'readonly': true} }) }}
+</div>
+
+
+{% endif %}
+<div class="form-outline form-white mb-4">
+    <button class="btn btn-lg btn-primary" type="submit">Save changes</button>
+</div>
+{{ form_end(modificationForm) }}
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+{% else %}
+        <div class="alert alert-danger">You cannot edit a page that is not yours.</div>
+{% endif %}
+{% endblock %}
+
+
+

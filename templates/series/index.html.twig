@@ -1,0 +1,111 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Series{% endblock %}
+
+{% block body %}
+    <div class="container d-flex mt-5 justify-content-around col-res align-itmes-center">
+        <div class="text-white d-flex">
+            {{ form_start(form) }}
+            <div class="col-res-filter d-flex align-items-center">
+                <div class="form-group d-flex">
+                    {{ form_widget(form.Filtre) }}
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </div>
+            
+            </div>
+            <div class="form-group d-flex">
+                {{ form_widget(form.Genre) }}
+            </div>
+        </div>
+    </div>
+<div class="container d-flex mt-5 justify-content-around col-res align-itmes-center"
+    <div class="d-flex col-res col-res-l align-items-center">
+        {% if series.totalItemCount > 0 %}
+            <div class="mt-5-res">
+                {% do series.setPageRange(2) %}
+                {{ knp_pagination_render(series,'./pagination.html.twig') }}  
+            </div>
+        {% endif %}
+        <div class="formTitle">
+            {{ form_widget(form.Title) }}
+                <button type="submit" class="search-button search-button-me">
+                    <i class="fas fa-search"></i>
+                </button>
+            {{ form_end(form) }}
+        </div>
+        {% if is_granted('IS_AUTHENTICATED_FULLY') and app.user.admin == 1 %}
+            <div>
+                <a href="{{path('app_series_new')}}"> <i class="fas fa-plus text-white hoverBlue"></i> </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+    <div class="container">
+        <div class="d-flex flex-wrap col-res">
+        {% for series in series %}
+            <div class="col-md-4 mt-5 justify-content-center row2">
+                <div class="card position-relative card-series">
+                {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                    {% if app.user.getSeries.contains(series) %}
+                    <a href="{{path('app_series_suprFav', {'id':series.id })}}" ><img id="img-hearth-poster" src="{{asset('image/FullHeart.png')}} ">{# coeur plein #} </img></a>
+                    {% else %}
+                    <a href="{{path('app_series_fav', {'id':series.id })}}" ><img id="img-hearth-poster-2" src="{{asset('image/VideHeart.png')}} ">{# coeur plein #} </img></a>
+                    {% endif %}
+                    <h4 class="d-flex position-absolute" id="stateSeries"> {{series.followSeries(app.user)}}</h4>
+                    
+                {% endif %}
+                      <a href="{{ path('app_series_show', {'id': series.id}) }}">
+                        {{ series.showPoster }}</a>
+                    
+                    <div class="card-body bg-dark flex-row d-flex justify-content-around">
+                        <h5 class="card-text text-white">{{ series.title }}</h5>
+                        <div class="d-flex flex-row flex-end ">
+                        {% if  series.getNumberRates > 0 %}
+                            {% for i in range(1, 5 ) %}
+                                {% if  i <= series.getAverage|round  %}
+                                    <img id="star-img" src="{{asset('image/star.png')}}" ></img>
+                                {% else %}
+                                    <img id="star-img" src="{{asset('image/star-vide.png')}}" ></img>
+                                {% endif %}
+                            {% endfor %} 
+                            <p id="p-nb-rate">({{series.getNumberRates}}) </p>
+                            {% else %}
+                            <p id="p-nb-rate">(0 vote)</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+    </div>
+
+    {% if series.totalItemCount > 0 %}
+        <div class="d-flex mt-5 justify-content-center">
+            {% do series.setPageRange(2) %}
+            {{ knp_pagination_render(series,'./pagination.html.twig') }}  
+        </div>
+    {% endif %}
+                   
+
+{% endblock %}
+
+{% block javascripts %}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $("#form_Filtre_2").removeAttr("checked");
+            $("#{{ form.Genre.vars.id }}").hide();
+            $(document).on('change', '#form_Filtre_2', function() {
+                if(this.checked) {
+                    $("#{{ form.Genre.vars.id }}").show();
+                }else{
+                   $("#{{ form.Genre.vars.id }}").hide();
+                }
+                    
+            });
+        });
+    </script>
+{% endblock %}

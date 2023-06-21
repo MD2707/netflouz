@@ -1,0 +1,213 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Series{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    
+    <div class="row justify-content-center">
+        <div class="col-md-10 mb-4 d-flex justify-content-between">
+            <a href="{{ path('app_series_index') }}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" style="color:white;" fill="currentColor" class="bi bi-arrow-left-circle" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-4.5-.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5z"/>
+                </svg>
+            </a>
+            {% if is_granted('IS_AUTHENTICATED_FULLY') and app.user.admin == 1 %}
+                <a href="{{path('app_series_edit', {'id':series.id })}}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" style="color:white;"  fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16">
+                    <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001zm-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708l-1.585-1.585z"/>
+                    </svg>
+                </a>
+            {% endif %}
+        </div>
+        <div class="col-md-10 detailSeries mb-5">
+            <iframe width="560" height="315" src="{{ series.youtubeTrailer }}" title="YouTube video player"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen></iframe>
+            
+        </div>
+         <div class=" series-title-div d-flex flex-row w-100 align-items-center ">
+            <h1 class="text-white series-title-h1">{{ series.title }}
+            {% if average %}
+                - {{average|number_format(1) }}
+            {% endif %}
+            </h1>
+            {% if is_granted('IS_AUTHENTICATED_FULLY')%}
+                {% if  app.user.getSeries.contains(series) %}
+                    <a href="{{path('app_series_suprFav', {'id':series.id })}}" ><img src="{{asset('image/FullHeart.png')}} " width="40rem">{# coeur plein #} </img></a> 
+                {% else %}
+                    <a href="{{path('app_series_fav', {'id':series.id })}}" > <img src="{{asset('image/VideHeart.png')}} " width="40rem">{# coeur plein #} </img></a> 
+                {% endif %}
+            {% endif %}
+            </div>
+            <p style="color : #65b977;">{{percentage_watched}}</p>
+            <div class="d-flex">
+                <p class="text-white mr-2">
+                    <strong>Awards : </strong>{{ series.awards }}
+                </p>
+                <p class="text-white mx-2">
+                    <strong>{{ series.yearStart }}</strong>
+                </p>
+                <p class="text-white mx-2">
+                    <strong>Genre : </strong> 
+                    {% for genre in series.genre %}
+                        {{ genre.name }}
+                    {% endfor %}
+                </p>
+            </div>
+            <div class="col">
+                <div class="d-flex">
+                    <p class="text-white">
+                        <strong>Distribution :</strong> 
+                        {% for actor in series.actor %}
+                            {{ actor.name }},
+                        {% endfor %}
+                    </p>
+                </div>
+                <p class="text-white">
+                    {% if series.director != null %}
+                        <strong>Director :</strong> {{series.director}}
+                    {% endif %} 
+                </p>
+            </div>
+            <div class="col">
+                <div class="d-flex">
+                    <p class="text-white">
+                        <a href="https://www.imdb.com/title/{{series.imdb}}/"><strong>serie's IMDB link</strong> </a>
+                    </p>
+                </div>
+            </div>
+            <p class="lead mb-5 text-white">{{ series.plot }}</p>
+            <ul class="list-unstyled">
+                <div id="accordion">
+                    {% for season in series.seasons %}
+                    <div class="card mb-2">
+                        <div class="card-header bg-dark" id="heading{{season.number}}">
+                            <h5 class="mb-0">
+
+                                <button class=" d-flex w-100 btn btn-link" data-bs-toggle="collapse"
+                                    data-bs-target="#collapse{{season.number}}" aria-expanded="true"
+                                    aria-controls="collapse{{season.number}}">
+                                    <h4 class="text-white"> season - {{season.number}} </h4>
+                                </button>
+                            </h5>
+                        </div>
+                        <div id="collapse{{season.number}}" class="collapse"
+                            aria-labelledby="heading{{season.number}}" data-bs-parent="#accordion">
+                            <div class="card-body">
+                                {% for episode in season.episodes %}
+                                    <div class="d-flex">
+                                        <p class="series-title-h1">episode {{episode.number}} - {{episode.title}}</p>                                      
+                                    {% if is_granted('IS_AUTHENTICATED_FULLY')%}
+                                        {% if  app.user.getEpisode.contains(episode) %}
+                                            <a href="{{path('app_series_suprFavEp', {'id':series.id,'idEp':episode.id })}}" ><img src="{{asset('image/FullEye.png')}} " width="20rem">{# coeur plein #} </img></a> 
+                                        {% else %}
+                                            <a href="{{path('app_series_favEp', {'id':series.id,'idEp':episode.id })}}" ><img src="{{asset('image/EyeVide.png')}} " width="20rem">{# coeur plein #} </img></a> 
+                                        {% endif %}
+                                    {% endif %}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </ul>
+            {% if is_granted('IS_AUTHENTICATED_FULLY')%}
+                <h1 class="text-white mt-5">Comment and Rating</h1>
+                {% for label, messages in app.flashes %}
+                    {% for message in messages %}
+                    {% if label == 'error' %}
+                        <div class="alert alert-danger">{{ message }}</div>
+                        {% else %}
+                            <div class="text-success">{{ message }}</div>
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+                <div class="d-flex">
+                    <div class="col-md-6 form-group justify-content-center w-auto">
+                        {{ form_start(form) }}
+                        <div class="col-md-6 col-res justify-content-center">
+                                <div class="form-group col-md-6 text-white mt-4">
+                                    {{ form_label(form.rate) }}
+                                    {{ form_widget(form.rate) }}
+                                </div>
+                                <div class="form-group col-md-6 mt-4">
+                                    {{ form_widget(form.comment) }}
+                                </div>
+                                   
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-primary mt-4">Send</button>
+                            </div>
+                        </div>
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            {% endif %}
+            {% if page.items %}
+                {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                    <h1 class="text-white mt-5">Comment</h1>
+                    <div class="d-flex col-res">
+                        <div class="col-sm-12 col-md-5 float-left">
+                            <a href="{{ path('app_series_show', {'id': series.id}) }}" class="btn btn-primary">DEFAULT</a>
+                            <a href="{{ path('app_series_showByRate', {'id': series.id,'rate': 0}) }}" class="btn btn-primary">0</a>
+                            <a href="{{ path('app_series_showByRate', {'id': series.id,'rate': 1}) }}" class="btn btn-primary">1</a>
+                            <a href="{{ path('app_series_showByRate', {'id': series.id,'rate': 2}) }}" class="btn btn-primary">2</a>
+                            <a href="{{ path('app_series_showByRate', {'id': series.id,'rate': 3}) }}" class="btn btn-primary">3</a>
+                            <a href="{{ path('app_series_showByRate', {'id': series.id,'rate': 4}) }}" class="btn btn-primary">4</a>
+                            <a href="{{ path('app_series_showByRate', {'id': series.id,'rate': 5}) }}" class="btn btn-primary">5</a>
+                        </div>
+                {% endif %}
+                {% if page.totalItemCount > 0 %}
+                <div class="col-sm-12 col-md-6 ml-auto">
+                        {% do page.setPageRange(2) %}
+                        {{ knp_pagination_render(page,'./pagination.html.twig') }}  
+                 </div>
+                {% endif %}
+                </div>
+            {% endif %}
+            <div class="d-flex justify-content-center" id="commentaire">
+                <div class="col-md-12">
+                    <div>
+                        {% for rate in  page %}
+                        {% if rate.getValide == 1 %}
+                            <hr class="w-100 text-white">
+                            <div class="d-flex justify-content-center">
+                                <div class="col-md-12">
+                                    <p class="text-white">Publié il y a {{ rate.diffTime }}</p>
+                                    <p class="text-white">{{rate.user.name}} - {{rate.getVale}} </p>
+                                    <div class="d-flex w-75 flex-wrap">
+                                        <p class="text-justify text-white mx-5">{{rate.comment}} </p>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                    {% if page.totalItemCount > 0 %}
+                        <div class="mt-5-res d-flex justify-content-center">
+                            {% do page.setPageRange(2) %}
+                            {{ knp_pagination_render(page,'./pagination.html.twig') }}  
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    function gotoEnd(){
+        const url = window.location.href;
+        if (url.includes("?page=")){
+            const element = document.getElementById("commentaire");
+            console.log(element);
+            element.scrollIntoView();
+        }
+    }
+</script>
+{% endblock %}

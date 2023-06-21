@@ -1,0 +1,68 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Review handling
+{% endblock %}
+
+{% block body %}
+	<div class="container mt-5">
+		<div class="row justify-content-center">
+			<div class="col-md-10 mb-4">
+				<a href="{{ path('app_series_index') }}">
+					<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" style="color:white;" fill="currentColor" class="bi bi-arrow-left-circle" viewbox="0 0 16 16">
+						<path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-4.5-.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5z"/>
+					</svg>
+				</a>
+			</div>
+			<div class=" series-title-div d-flex flex-row w-100 align-items-center ">
+				<h1 class="text-white series-title-h1">Comment Handling
+				</h1>
+			</div>
+			
+		</div>
+	</div>
+	 {% if commentaires.totalItemCount > 0 %}
+        <div class="d-flex mt-5 justify-content-center">
+            {% do commentaires.setPageRange(2) %}
+            {{ knp_pagination_render(commentaires,'./pagination.html.twig') }}  
+        </div>
+    {% endif %}
+	<div class="row justify-content-center">
+		<div class="col-md-10">
+			<div class="card">
+				<div class="card-header">Comment Handling</div>
+				<div class="card-body">
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<th>Id</th>
+								<th>Series</th>
+								<th>Comment</th>
+								<th>rating</th>
+								<th>Date</th>
+								<th>Hours ago : </th>
+								<th>Actions</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for commentaire in commentaires %}
+								{% if commentaire.valide == 0 %}
+									<tr>
+										<td>{{ commentaire.id }}</td>
+										<td>{{ commentaire.series }}</td>
+										<td>{{ commentaire.comment }}</td>
+										<td>{{ commentaire.getVale }}</td>
+										<td>{{ commentaire.date ? commentaire.date|date('Y-m-d H:i:s') : '' }}</td>
+										<td>{{ commentaire.diffTime }}</td>
+
+
+										<td>
+											<a href="{{ path('app_commentaire_valide', {'id': commentaire.id}) }}" class="btn btn-success">Confirm</a>
+											<a href="{{ path('app_commentaire_delete', {'id': commentaire.id}) }}" class="btn btn-danger">Delete</a>
+										</td>
+									</tr>
+								{% endif %}
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			{% endblock %}

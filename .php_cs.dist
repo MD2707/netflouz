@@ -1,0 +1,17 @@
+<?php
+
+$finder = PhpCsFixer\Finder::create()
+    ->in(DIR)
+    ->exclude('vendor')
+    ->notPath('tests')
+    ->name('*.php');
+
+return PhpCsFixer\Config::create()
+    ->setRiskyAllowed(true)
+    ->setRules([
+        '@Symfony' => true,
+        'array_syntax' => ['syntax' => 'short'],
+        'no_superfluous_phpdoc_tags' => true,
+        'single_quote' => true,
+    ])
+    ->setFinder($finder);

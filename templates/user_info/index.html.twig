@@ -1,0 +1,77 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Community
+{% endblock %}
+
+{% block javascripts %}
+
+	<script>
+		function test() {
+let form = document.getElementById("form_Filtre");
+if (form != null) {
+form.addEventListener('change', function () {
+let input = document.getElementById("input-search-id");
+var index = form.selectedIndex;
+if (index == 0) 
+input.placeholder = "Write the user name here";
+ else 
+input.placeholder = "Write the user email here";
+
+})
+}
+}
+setTimeout(test(), 2000)
+	</script>
+
+{% endblock %}
+
+{% block body %}
+
+	<div class="container mt-5">
+
+		{{ form_start(form) }}
+		<form action="{{ path('app_user_index') }}" method="GET">
+			<div class="form-group d-flex  flex-row justify-content-around w-50">
+				<div class=" w-50 d-flex flex-row ">
+					<input id="input-search-id" type="text" class=" w-100 form-control " id="email" name="email" placeholder="Write the user email here">
+					<button id="search-button-mr" type="submit" class="search-button search-button-me">
+						<i class="fas fa-search"></i>
+					</button>
+				</div>
+				<li class="text-white d-flex flex-row">
+					{{ form_widget(form) }}
+				</li>
+			</div>
+		</form>
+		{{ form_end(form) }}
+
+		{% if users.totalItemCount > 0 %}
+			<div class="mt-5-res d-flex mt-5 justify-content-center">
+				{% do users.setPageRange(2) %}
+				{{ knp_pagination_render(users,'./pagination.html.twig') }}
+			</div>
+		{% endif %}
+
+
+		<div class="d-flex flex-wrap col-res">
+			{% for user in users %}
+				<div class="col-md-4 mt-5 justify-content-center row2">
+					<a id="userInfo-a-commentaire" href="{{ path('app_userpref_show', {'id': user.id}) }}">
+						<div class="card">
+							<div class="card-body bg-dark d-flex align-items-center">
+								<h5 class="card-text text-white">{{ user.email }}</h5>
+							</div>
+						</div>
+					</a>
+				</div>
+			{% endfor %}
+		</div>
+	</div>
+
+	{% if users.totalItemCount > 0 %}
+		<div class="d-flex mt-5 justify-content-center">
+			{% do users.setPageRange(2) %}
+			{{ knp_pagination_render(users,'./pagination.html.twig') }}
+		</div>
+	{% endif %}
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Series{% endblock %}
+
+{% block body %}
+    <div class="text-white container">
+        <h1>Create new Series</h1>
+
+        {{ form_start(form) }}
+            {{ form_widget(form) }}
+        <div class="col-md-6 col-sm-12">
+            <div class="d-flex">
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-primary">{{ button_label|default('Save') }}</button>
+                </div>
+                <div class="col-md-4">
+                <a href="{{ path('app_series_index') }}" class="btn btn-primary">back to list</a>
+                </div>
+            </div>
+        </div>
+        {{ form_end(form) }}
+
+       {# {{ include('series/_form.html.twig') }}
+
+        <a href="{{ path('app_series_index') }}">back to list</a>#}
+    </div>
+{% endblock %}
